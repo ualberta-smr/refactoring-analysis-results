@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/158746475.svg)](https://zenodo.org/badge/latestdoi/158746475)
+
 # Refactoring Analysis Results
 This repository contains the result of the [refactoring analysis](https://github.com/ualberta-smr/refactoring-analysis-results) used in our Saner '19 submission.
 
