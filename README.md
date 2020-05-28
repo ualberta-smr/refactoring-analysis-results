@@ -1,7 +1,7 @@
 [![DOI](https://zenodo.org/badge/158746475.svg)](https://zenodo.org/badge/latestdoi/158746475)
 
 # Refactoring Analysis Results
-This repository contains the result of the [refactoring analysis](https://github.com/ualberta-smr/refactoring-analysis-results) used in our SANER '19 paper titled "Are Refactorings to Blame? An Empirical Study of Refactorings in Merge Conflicts" by Mehran Mahmoudi, Sarah Nadi, and Nikolaos Tsantalis.
+This repository contains the result of running the [refactoring analysis](https://github.com/ualberta-smr/RefactoringsInMergeCommits) used in our SANER '19 paper titled "Are Refactorings to Blame? An Empirical Study of Refactorings in Merge Conflicts" by Mehran Mahmoudi, Sarah Nadi, and Nikolaos Tsantalis.
 
 ### refactoring_analysis_dump_5_OCT_2018.sql.zip
 This is a sql dump of the database.
