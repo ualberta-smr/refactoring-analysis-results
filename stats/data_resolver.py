@@ -116,7 +116,6 @@ def get_conflicting_regions_by_count_of_involved_refactoring():
         project_rrs = rr_grouped_by_project.get_group(project_id)
         crh_rr_combined = pd.merge(project_crh.reset_index(), project_rrs.reset_index(), on='commit_hash', how='inner')
         crh_with_involved_refs = crh_rr_combined[crh_rr_combined.apply(record_involved, axis=1)]
-        #crs_with_involved_refs = crs_with_involved_refs.append(crh_with_involved_refs.groupby('conflicting_region_id').size().to_frame())
         crs_with_involved_refs  = pd.concat([crs_with_involved_refs, pd.DataFrame(crh_with_involved_refs.groupby('conflicting_region_id').size().to_frame())], axis=0)
     crs_by_involved_refs = conflicting_regions[['id']]
     # The +2 is because length is actually the difference between the start and end line of the code range. So the
@@ -145,7 +144,6 @@ def get_conflicting_region_size_by_involved_refactoring_size():
         project_rrs = rr_grouped_by_project.get_group(project_id)
         crh_rr_combined = pd.merge(project_crh.reset_index(), project_rrs.reset_index(), on='commit_hash', how='inner')
         crh_with_involved_refs = crh_rr_combined[crh_rr_combined.apply(record_involved, axis=1)]
-        # crs_with_involved_refs_size = crs_with_involved_refs_size.append(crh_with_involved_refs.groupby('conflicting_region_id').length.sum().to_frame())
         crs_with_involved_refs_size = pd.concat([crs_with_involved_refs_size, pd.DataFrame(crh_with_involved_refs.groupby('conflicting_region_id').length.sum().to_frame())], axis=0)
     crs_with_involved_refs_size.rename(columns={'length': 'refactoring_size'}, inplace=True)
     crs_by_size = conflicting_regions[['id']]
@@ -190,7 +188,6 @@ def get_conflicting_merge_commit_by_merge_author_involvement_in_conflict():
         crh_mc_involvement = crh_mc_count.join(crh_mc_same_author_count, how='outer').join(crh_mc_with_involved_ref_count, how='outer').join(crh_mc_same_author_with_involved_ref_count, how='outer').fillna(0).astype(int).reset_index()
         crh_mc_involvement['project_id'] = project_id
 
-        # mc_by_author_involvement = mc_by_author_involvement.append(crh_mc_involvement)
         mc_by_author_involvement   = pd.concat([mc_by_author_involvement, pd.DataFrame(crh_mc_involvement)], axis=0)
     return mc_by_author_involvement
 
@@ -222,7 +219,6 @@ def get_involved_refactorings_by_refactoring_type():
         involved_ref_per_type['involved_refs_count'] = involved_ref_per_type['involved_refs_count'] / sum(
             involved_ref_per_type['involved_refs_count'])
         involved_ref_per_type.rename(columns={'involved_refs_count': str(project_id)}, inplace=True)
-        #TODO: involved_refs_count_per_project = involved_refs_count_per_project.append(involved_ref_per_type.T)
         involved_refs_count_per_project = pd.concat([involved_refs_count_per_project, pd.DataFrame(involved_ref_per_type.T)], axis=0)
     return involved_refs_count_per_project.T
 
@@ -246,7 +242,6 @@ def get_refactorings_by_refactoring_type():
         refactorings_per_type['refs_count'] = refactorings_per_type['refs_count'] / sum(
             refactorings_per_type['refs_count'])
         refactorings_per_type.rename(columns={'refs_count': str(project_id)}, inplace=True)
-        # refactorings_count_per_project = refactorings_count_per_project.append(refactorings_per_type.T)
         refactorings_count_per_project =  pd.concat([refactorings_count_per_project, pd.DataFrame(refactorings_per_type.T)], axis=0)
     return refactorings_count_per_project.T
 
@@ -270,10 +265,6 @@ def get_refactorings_by_refactoring_type_split_by_involved():
             involved_df = pd.DataFrame({'project_id': project_id, 'refactoring_type': refactoring_type,
                                         'percent': involved_percent, 'overall_or_involved': 'involved'}, index=[0])
             plot_df = pd.concat([plot_df, involved_df], axis=0, ignore_index=True)
-
-            # plot_df = plot_df.append({'project_id': project_id, 'refactoring_type': refactoring_type,
-            #                           'percent': involved_percent, 'overall_or_involved': 'involved'},
-            #                          ignore_index=True)
             plot_df = pd.concat([plot_df, pd.DataFrame({'project_id': project_id, 'refactoring_type': refactoring_type,
                                         'percent': involved_percent, 'overall_or_involved': 'involved'}, index=[0])], axis=0)
             
@@ -297,7 +288,6 @@ def get_conflicting_regions_by_involved_refactorings_per_merge_commit():
         project_rrs = rr_grouped_by_project.get_group(project_id)
         crh_rr_combined = pd.merge(project_crh.reset_index(), project_rrs.reset_index(), on='commit_hash', how='inner')
         involved = crh_rr_combined[crh_rr_combined.apply(record_involved, axis=1)]
-        # involved_cr_count_per_merge = involved_cr_count_per_merge.append(involved.groupby('merge_commit_id').conflicting_region_id.nunique().to_frame().rename(columns={'conflicting_region_id': 'involved_cr_count'}))
         involved_cr_count_per_merge = pd.concat([involved_cr_count_per_merge, pd.DataFrame(involved.groupby('merge_commit_id').conflicting_region_id.nunique().to_frame().rename(columns={'conflicting_region_id': 'involved_cr_count'}))], axis=0)
     rq1_table = cr_count_per_merge.join(involved_cr_count_per_merge, how='outer').fillna(0).astype(int)
     rq1_table['percent'] = rq1_table['involved_cr_count'] / rq1_table['cr_count']
@@ -327,7 +317,6 @@ def get_merge_commit_by_crh_and_devs_and_involved_refactorings():
         devs_count = project_crh.groupby('merge_commit_id').author_email.nunique().to_frame().rename(columns={'author_email': 'devs'})
 
         this_project = crh_count.join(devs_count, how='outer').join(involved_refs_count, how='outer').fillna(0).astype(int)
-        # mc_by_crh_and_devs_and_involved_refactorings = mc_by_crh_and_devs_and_involved_refactorings.append(this_project)
         mc_by_crh_and_devs_and_involved_refactorings = pd.concat([mc_by_crh_and_devs_and_involved_refactorings, pd.DataFrame(this_project)], axis=0)
     return mc_by_crh_and_devs_and_involved_refactorings
 
@@ -418,4 +407,4 @@ def cohen_delta_refactoring_types_involved_vs_overall():
 
 if __name__ == '__main__':
     cohen_delta_refactoring_types_involved_vs_overall()
-    # print_stats()
+    print_stats()
